@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>微信公众号 Markdown 排版与语法高亮工具</title>
+
+  <!-- Typography & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Marked (Markdown Parser) & Highlight.js (Syntax Highlighting) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+  <!-- Dynamic style block for syntax highlighting -->
+  <style id="dynamic-hljs-style"></style>
+
+  <style>
+    /* Design Tokens */
+    :root {
+      --bg-primary: #0b0f19;
+      --bg-secondary: #111827;
+      --bg-tertiary: #1f2937;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --accent-color: #6366f1;
+      --accent-hover: #4f46e5;
+      --border-color: #374151;
+      --glass-bg: rgba(17, 24, 39, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+      --font-ui: 'Outfit', 'Inter', 'Noto Sans SC', sans-serif;
+    }
+
+    .light-theme {
+      --bg-primary: #f3f4f6;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #f9fafb;
+      --text-main: #1f2937;
+      --text-muted: #6b7280;
+      --accent-color: #4f46e5;
+      --accent-hover: #4338ca;
+      --border-color: #e5e7eb;
+      --glass-bg: rgba(255, 255, 255, 0.8);
+      --glass-border: rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-ui);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-secondary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-color);
+    }
+
+    /* Header & Navigation */
+    header {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 0.75rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-icon {
+      font-size: 1.5rem;
+      color: var(--accent-color);
+      animation: pulse 2s infinite alternate;
+    }
+
+    .logo-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent-color), #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .theme-toggle-btn,
+    .action-btn {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
+    }
+
+    .theme-toggle-btn:hover,
+    .action-btn:hover {
+      border-color: var(--accent-color);
+      background: rgba(99, 102, 241, 0.1);
+    }
+
+    /* Main Layout */
+    .main-container {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      padding: 1rem 2rem;
+      gap: 1.5rem;
+    }
+
+    /* Left Pane: Editor */
+    .editor-pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+
+    .pane-header {
+      background: rgba(0, 0, 0, 0.15);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.5rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .pane-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .tool-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.35rem;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .tool-btn:hover {
+      color: var(--text-main);
+      background: var(--bg-tertiary);
+    }
+
+    .editor-wrapper {
+      flex: 1;
+      position: relative;
+    }
+
+    textarea#markdown-input {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      resize: none;
+      padding: 1.25rem;
+      color: var(--text-main);
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* Right Pane: WeChat Article Preview */
+    .preview-pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow-y: auto;
+      padding: 1rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* Phone Mockup Frame */
+    .phone-mockup {
+      width: 375px;
+      min-height: 700px;
+      background: #ffffff;
+      border: 12px solid #1f2937;
+      border-radius: 36px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      margin-bottom: 2rem;
+    }
+
+    /* Phone Status Bar */
+    .phone-status-bar {
+      height: 24px;
+      background: #f3f4f6;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px;
+      font-size: 11px;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    /* Phone WeChat Header */
+    .phone-wechat-header {
+      height: 48px;
+      background: #f3f4f6;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      color: #1f2937;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .phone-wechat-header i {
+      font-size: 16px;
+      color: #4b5563;
+    }
+
+    /* Phone Content Area */
+    .phone-content {
+      flex: 1;
+      overflow-y: auto;
+      background: #ffffff;
+      color: #333333;
+      padding: 20px 16px;
+      word-wrap: break-word;
+      font-family: -apple-system-font, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    /* WeChat Style Presets & Configurations */
+    .settings-panel {
+      width: 280px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .setting-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .setting-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .select-input,
+    .text-input {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.5rem;
+      border-radius: 6px;
+      outline: none;
+      font-size: 0.875rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .select-input:focus,
+    .text-input:focus {
+      border-color: var(--accent-color);
+    }
+
+    /* WeChat Preview Element Styling */
+    .wechat-article-title {
+      font-size: 22px;
+      font-weight: bold;
+      line-height: 1.4;
+      margin-bottom: 12px;
+      color: #222222;
+    }
+
+    .wechat-author-info {
+      font-size: 15px;
+      color: #888888;
+      margin-bottom: 22px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .wechat-author-info .wechat-link {
+      color: #576b95;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    /* WeChat parsed HTML rendering classes (Applied dynamically) */
+    .rendered-content p {
+      font-size: 15px;
+      line-height: 1.75;
+      color: #333333;
+      margin: 1.25em 0;
+      text-align: justify;
+    }
+
+    .rendered-content h1,
+    .rendered-content h2,
+    .rendered-content h3 {
+      font-weight: bold;
+      color: #111111;
+      margin: 1.6em 0 0.8em 0;
+      line-height: 1.4;
+    }
+
+    .rendered-content h1 {
+      font-size: 20px;
+      border-bottom: 2px solid var(--theme-color, #6366f1);
+      padding-bottom: 4px;
+    }
+
+    .rendered-content h2 {
+      font-size: 18px;
+      border-left: 4px solid var(--theme-color, #6366f1);
+      padding-left: 8px;
+    }
+
+    .rendered-content h3 {
+      font-size: 16px;
+    }
+
+    .rendered-content blockquote {
+      border-left: 4px solid #cbcbcb;
+      padding: 10px 15px;
+      background: #f8f8f8;
+      color: #666666;
+      margin: 1.25em 0;
+      border-radius: 4px;
+    }
+
+    .rendered-content ul,
+    .rendered-content ol {
+      padding-left: 20px;
+      margin: 1.25em 0;
+      color: #333333;
+    }
+
+    .rendered-content li {
+      margin-bottom: 6px;
+      line-height: 1.6;
+    }
+
+    /* Code Highlight Wrapper with Mac-style header */
+    .code-block-wrapper {
+      margin: 1.5em 0;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border: 1px solid #e5e7eb;
+    }
+
+    .code-header {
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background-color 0.2s ease;
+    }
+
+    .mac-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .mac-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .mac-dot.red {
+      background: #ff5f56;
+    }
+
+    .mac-dot.yellow {
+      background: #ffbd2e;
+    }
+
+    .mac-dot.green {
+      background: #27c93f;
+    }
+
+    .code-lang {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: bold;
+      letter-spacing: 0.05em;
+    }
+
+    .rendered-content pre {
+      margin: 0 !important;
+      padding: 12px 16px !important;
+      overflow-x: auto;
+      border-radius: 0 0 8px 8px;
+    }
+
+    .rendered-content code {
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* Inline styling overrides for copying */
+    .rendered-content p code {
+      background: #f3f4f6;
+      color: #ea580c;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    /* Floating Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--accent-color);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 50px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+      font-weight: 500;
+      z-index: 1000;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      from {
+        transform: scale(1);
+      }
+
+      to {
+        transform: scale(1.08);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Header -->
+  <header>
+    <div class="logo-container">
+      <i class="fa-solid fa-code-merge logo-icon"></i>
+      <span class="logo-title">WeChat Markdown Highlight</span>
+    </div>
+
+    <div class="header-actions">
+      <button class="action-btn" id="copy-btn">
+        <i class="fa-regular fa-copy"></i> 一键复制公众号格式
+      </button>
+      <button class="theme-toggle-btn" id="theme-toggle">
+        <i class="fa-solid fa-moon"></i> 暗黑模式
+      </button>
+    </div>
+  </header>
+
+  <!-- Main View -->
+  <div class="main-container">
+
+    <!-- Controls/Settings Panel (Leftmost) -->
+    <div class="settings-panel">
+      <h3
+        style="font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fa-solid fa-sliders"></i> 排版配置
+      </h3>
+
+      <div class="setting-group">
+        <label class="setting-label">排版风格主题</label>
+        <select class="select-input" id="style-theme">
+          <option value="elegant-blue">极客雅蓝</option>
+          <option value="forest-green">森林清绿</option>
+          <option value="vibrant-orange">元气活力橙</option>
+          <option value="minimalist-dark">极简暗灰</option>
+        </select>
+      </div>
+
+      <div class="setting-group">
+        <label class="setting-label">代码高亮主题</label>
+        <select class="select-input" id="highlight-theme">
+          <option value="atom-one-dark">Atom One Dark</option>
+          <option value="github">GitHub Light</option>
+          <option value="monokai">Monokai</option>
+          <option value="dracula">Dracula</option>
+        </select>
+      </div>
+
+      <div class="setting-group">
+        <label class="setting-label">正文文字大小</label>
+        <select class="select-input" id="font-size-select">
+          <option value="14px">14px (紧凑)</option>
+          <option value="15px" selected>15px (推荐)</option>
+          <option value="16px">16px (宽松)</option>
+        </select>
+      </div>
+
+      <div class="setting-group">
+        <label class="setting-label">文章作者</label>
+        <input type="text" class="text-input" id="author-input" value="张伟">
+      </div>
+
+      <div class="setting-group">
+        <label class="setting-label">模板代码示例</label>
+        <select class="select-input" id="template-select">
+          <option value="default">默认混排文章</option>
+          <option value="python">Python 高阶语法</option>
+          <option value="js">JavaScript 异步操作</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Editor Panel (Middle) -->
+    <div class="editor-pane">
+      <div class="pane-header">
+        <div class="pane-title">
+          <i class="fa-solid fa-pen-fancy"></i> Markdown 编辑器
+        </div>
+        <div class="toolbar">
+          <button class="tool-btn" title="加粗" onclick="insertFormat('**', '**')"><i
+              class="fa-solid fa-bold"></i></button>
+          <button class="tool-btn" title="斜体" onclick="insertFormat('*', '*')"><i
+              class="fa-solid fa-italic"></i></button>
+          <button class="tool-btn" title="链接" onclick="insertFormat('[', '](url)')"><i
+              class="fa-solid fa-link"></i></button>
+          <button class="tool-btn" title="引用" onclick="insertFormat('\n> ', '')"><i
+              class="fa-solid fa-quote-left"></i></button>
+          <button class="tool-btn" title="插入代码块" onclick="insertFormat('\n```python\n', '\n```\n')"><i
+              class="fa-solid fa-code"></i></button>
+        </div>
+      </div>
+      <div class="editor-wrapper">
+        <textarea id="markdown-input" placeholder="在此输入或粘贴您的 Markdown 文本..."></textarea>
+      </div>
+    </div>
+
+    <!-- WeChat Preview Panel (Right) -->
+    <div class="preview-pane">
+      <div class="pane-header" style="width: 375px; border-radius: 12px 12px 0 0; margin-bottom: 0.5rem;">
+        <div class="pane-title">
+          <i class="fa-solid fa-mobile-screen-button"></i> 手机预览效果
+        </div>
+      </div>
+
+      <!-- Phone Mockup -->
+      <div class="phone-mockup">
+        <!-- Phone Status Bar -->
+        <div class="phone-status-bar">
+          <span>10:24</span>
+          <div>
+            <i class="fa-solid fa-signal" style="margin-right: 4px;"></i>
+            <i class="fa-solid fa-wifi" style="margin-right: 4px;"></i>
+            <i class="fa-solid fa-battery-three-quarters"></i>
+          </div>
+        </div>
+        <!-- Phone WeChat Header -->
+        <div class="phone-wechat-header">
+          <i class="fa-solid fa-chevron-left"></i>
+          <span style="font-weight: 500;">微信公众号文章</span>
+          <i class="fa-solid fa-ellipsis"></i>
+        </div>
+        <!-- Phone Content Area -->
+        <div class="phone-content" id="wechat-content">
+          <div class="wechat-article-title" id="preview-title">使用 Python 构建高效并发应用</div>
+          <div class="wechat-author-info">
+            <span id="preview-author">张伟</span>
+            <span style="color: #888888;">2026-06-29</span>
+            <a href="#" class="wechat-link">公众号模板</a>
+          </div>
+          <div class="rendered-content" id="preview-body">
+            <!-- Rendered HTML will go here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <i class="fa-solid fa-circle-check"></i>
+    <span>成功复制公众号排版格式！</span>
+  </div>
+
+  <!-- Javascript logic -->
+  <script>
+    // Templates
+    const templates = {
+      default: `# WeChat Markdown Highlighting Tool
+
+微信公众号不支持直接粘贴 Markdown 代码块的语法高亮。本工具提供了一键转换并在复制代码时**自动内联化高亮 CSS** 的功能。
+
+## 💡 使用特点
+
+1. **内联样式映射**：将 Highlight.js 的样式彻底转换为 inline-styles，确保微信后台粘贴后样式不丢失。
+2. **手机端真实预览**：提供 375px 的公众号专属预览容器。
+3. **主流代码配色**：支持 Atom One Dark / Monokai / Dracula / GitHub 等主题。
+
+这里有一个 Python 语言的代码高亮示例：
+
+\`\`\`python
+# 生产者/消费者并发处理
+import asyncio
+
+async def worker(name, queue):
+    while True:
+        item = await queue.get()
+        print(f"Worker {name} is processing {item}...")
+        await asyncio.sleep(1)
+        queue.task_done()
+
+async def main():
+    queue = asyncio.Queue()
+    # 启动工作协程
+    workers = [asyncio.create_task(worker(f"w-{i}", queue)) for i in range(3)]
+    # 填充任务
+    for item in range(10):
+        await queue.put(item)
+    await queue.join()
+\`\`\`
+
+> 以上代码展示了 Python 中的 \`asyncio\` 协作式并发。使用此工具后即可拥有完美的语法高亮！`,
+
+      python: `# Python 核心高阶特性
+
+本文演示了一些常见的 Python 代码结构，并保证它们在微信中以完美的高亮样式呈现。
+
+## 🐍 List Comprehension & Generator
+
+下面的示例演示了生成器表达式和修饰器的组合使用：
+
+\`\`\`python
+from functools import wraps
+import time
+
+def timer(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start = time.perf_counter()
+        result = func(*args, **kwargs)
+        end = time.perf_counter()
+        print(f"方法 {func.__name__} 耗时: {end - start:.4f}s")
+        return result
+    return wrapper
+
+@timer
+def compute_squares(n):
+    # 生成斐波那契数列平方和
+    squares = [x**2 for x in range(n) if x % 2 == 0]
+    return sum(squares)
+
+if __name__ == "__main__":
+    total = compute_squares(100000)
+    print(f"计算结果: {total}")
+\`\`\`
+
+在微信端编辑时，只需一键复制代码并直接粘贴即可。`,
+
+      js: `# JavaScript 异步处理与 Promise
+
+现代 Web 前端开发中，高效的异步和高亮排版非常关键。
+
+## ☕ 经典 Fetch 请求
+
+使用 async/await 发送异步 HTTP 请求：
+
+\`\`\`javascript
+// Fetch user list from API
+async function fetchUsers(endpoint) {
+  try {
+    const response = await fetch(\`https://api.example.com/\${endpoint}\`);
+    if (!response.ok) {
+      throw new Error(\`HTTP error! status: \${response.status}\`);
+    }
+    const data = await response.json();
+    return data.users.filter(user => user.active);
+  } catch (error) {
+    console.error("Failed to fetch users:", error);
+    return [];
+  }
+}
+
+// 调用异步函数
+fetchUsers("v1/active-users").then(activeUsers => {
+  console.log("Active users array:", activeUsers);
+});
+\`\`\`
+
+排版工具能够识别此语法并为对应的代码高亮添加精准的 CSS。`
+    };
+
+    // Color theme mappings for WeChat elements
+    const styleThemes = {
+      'elegant-blue': {
+        primary: '#4f46e5',
+        h1: 'border-bottom: 2px solid #4f46e5; color: #1e3a8a; padding-bottom: 4px; margin: 1.6em 0 0.8em 0; font-size: 20px; font-weight: bold;',
+        h2: 'border-left: 4px solid #4f46e5; color: #1e3a8a; padding-left: 8px; margin: 1.6em 0 0.8em 0; font-size: 18px; font-weight: bold;',
+        h3: 'color: #1e3a8a; margin: 1.6em 0 0.8em 0; font-size: 16px; font-weight: bold;',
+        p: 'color: #3f3f46; font-size: 15px; line-height: 1.75; margin: 1.25em 0; text-align: justify;'
+      },
+      'forest-green': {
+        primary: '#10b981',
+        h1: 'border-bottom: 2px solid #10b981; color: #065f46; padding-bottom: 4px; margin: 1.6em 0 0.8em 0; font-size: 20px; font-weight: bold;',
+        h2: 'border-left: 4px solid #10b981; color: #065f46; padding-left: 8px; margin: 1.6em 0 0.8em 0; font-size: 18px; font-weight: bold;',
+        h3: 'color: #065f46; margin: 1.6em 0 0.8em 0; font-size: 16px; font-weight: bold;',
+        p: 'color: #27272a; font-size: 15px; line-height: 1.75; margin: 1.25em 0; text-align: justify;'
+      },
+      'vibrant-orange': {
+        primary: '#f97316',
+        h1: 'border-bottom: 2px solid #f97316; color: #9a3412; padding-bottom: 4px; margin: 1.6em 0 0.8em 0; font-size: 20px; font-weight: bold;',
+        h2: 'border-left: 4px solid #f97316; color: #9a3412; padding-left: 8px; margin: 1.6em 0 0.8em 0; font-size: 18px; font-weight: bold;',
+        h3: 'color: #9a3412; margin: 1.6em 0 0.8em 0; font-size: 16px; font-weight: bold;',
+        p: 'color: #27272a; font-size: 15px; line-height: 1.75; margin: 1.25em 0; text-align: justify;'
+      },
+      'minimalist-dark': {
+        primary: '#4b5563',
+        h1: 'border-bottom: 2px solid #4b5563; color: #111827; padding-bottom: 4px; margin: 1.6em 0 0.8em 0; font-size: 20px; font-weight: bold;',
+        h2: 'border-left: 4px solid #4b5563; color: #111827; padding-left: 8px; margin: 1.6em 0 0.8em 0; font-size: 18px; font-weight: bold;',
+        h3: 'color: #111827; margin: 1.6em 0 0.8em 0; font-size: 16px; font-weight: bold;',
+        p: 'color: #374151; font-size: 15px; line-height: 1.75; margin: 1.25em 0; text-align: justify;'
+      }
+    };
+
+    // Syntax highlight inline css maps for different highlight themes
+    const codeThemesInline = {
+      'atom-one-dark': {
+        name: 'Atom One Dark',
+        background: '#282c34',
+        headerBackground: '#21252b',
+        textColor: '#abb2bf',
+        pre: 'background: #282c34; color: #abb2bf; padding: 16px; border-radius: 8px; overflow-x: auto; font-family: Consolas, Monaco, monospace; font-size: 13px; line-height: 1.5; margin: 0;',
+        comment: 'color: #5c6370; font-style: italic;',
+        quote: 'color: #5c6370; font-style: italic;',
+        keyword: 'color: #c678dd;',
+        'selector-tag': 'color: #c678dd;',
+        literal: 'color: #56b6c2;',
+        section: 'color: #e06c75;',
+        link: 'color: #e06c75;',
+        subst: 'color: #e06c75;',
+        string: 'color: #98c379;',
+        title: 'color: #61afef;',
+        'title.function': 'color: #61afef;',
+        'title.class': 'color: #e6c07b;',
+        type: 'color: #e6c07b;',
+        built_in: 'color: #e6c07b;',
+        number: 'color: #d19a66;',
+        symbol: 'color: #61afef;',
+        bullet: 'color: #61afef;',
+        attribute: 'color: #d19a66;',
+        meta: 'color: #61afef;',
+        addition: 'color: #98c379;',
+        deletion: 'color: #e06c75;'
+      },
+      'github': {
+        name: 'GitHub Light',
+        background: '#f6f8fa',
+        headerBackground: '#eaecef',
+        textColor: '#24292e',
+        pre: 'background: #f6f8fa; color: #24292e; padding: 16px; border-radius: 8px; overflow-x: auto; font-family: Consolas, Monaco, monospace; font-size: 13px; line-height: 1.5; margin: 0; border: 1px solid #d1d5da;',
+        comment: 'color: #6a737d; font-style: italic;',
+        quote: 'color: #6a737d; font-style: italic;',
+        keyword: 'color: #d73a49;',
+        'selector-tag': 'color: #d73a49;',
+        literal: 'color: #005cc5;',
+        section: 'color: #005cc5;',
+        link: 'color: #005cc5;',
+        subst: 'color: #24292e;',
+        string: 'color: #032f62;',
+        title: 'color: #6f42c1;',
+        'title.function': 'color: #6f42c1;',
+        'title.class': 'color: #6f42c1;',
+        type: 'color: #e36209;',
+        built_in: 'color: #e36209;',
+        number: 'color: #005cc5;',
+        symbol: 'color: #e36209;',
+        bullet: 'color: #005cc5;',
+        attribute: 'color: #005cc5;',
+        meta: 'color: #6a737d;',
+        addition: 'color: #22863a; background-color: #f0fff4;',
+        deletion: 'color: #b31d28; background-color: #ffeef0;'
+      },
+      'monokai': {
+        name: 'Monokai',
+        background: '#272822',
+        headerBackground: '#1e1f1c',
+        textColor: '#f8f8f2',
+        pre: 'background: #272822; color: #f8f8f2; padding: 16px; border-radius: 8px; overflow-x: auto; font-family: Consolas, Monaco, monospace; font-size: 13px; line-height: 1.5; margin: 0;',
+        comment: 'color: #75715e; font-style: italic;',
+        quote: 'color: #75715e; font-style: italic;',
+        keyword: 'color: #f92672;',
+        'selector-tag': 'color: #f92672;',
+        literal: 'color: #ae81ff;',
+        section: 'color: #a6e22e;',
+        link: 'color: #ae81ff;',
+        subst: 'color: #f8f8f2;',
+        string: 'color: #e6db74;',
+        title: 'color: #a6e22e;',
+        'title.function': 'color: #a6e22e;',
+        'title.class': 'color: #66d9ef;',
+        type: 'color: #66d9ef;',
+        built_in: 'color: #66d9ef;',
+        number: 'color: #ae81ff;',
+        symbol: 'color: #f92672;',
+        bullet: 'color: #ae81ff;',
+        attribute: 'color: #a6e22e;',
+        meta: 'color: #75715e;',
+        addition: 'color: #a6e22e;',
+        deletion: 'color: #f92672;'
+      },
+      'dracula': {
+        name: 'Dracula',
+        background: '#282a36',
+        headerBackground: '#1d1f27',
+        textColor: '#f8f8f2',
+        pre: 'background: #282a36; color: #f8f8f2; padding: 16px; border-radius: 8px; overflow-x: auto; font-family: Consolas, Monaco, monospace; font-size: 13px; line-height: 1.5; margin: 0;',
+        comment: 'color: #6272a4; font-style: italic;',
+        quote: 'color: #6272a4; font-style: italic;',
+        keyword: 'color: #ff79c6;',
+        'selector-tag': 'color: #ff79c6;',
+        literal: 'color: #bd93f9;',
+        section: 'color: #50fa7b;',
+        link: 'color: #8be9fd;',
+        subst: 'color: #f8f8f2;',
+        string: 'color: #f1fa8c;',
+        title: 'color: #50fa7b;',
+        'title.function': 'color: #50fa7b;',
+        'title.class': 'color: #8be9fd;',
+        type: 'color: #8be9fd; font-style: italic;',
+        built_in: 'color: #8be9fd;',
+        number: 'color: #bd93f9;',
+        symbol: 'color: #ffb86c;',
+        bullet: 'color: #ff79c6;',
+        attribute: 'color: #50fa7b;',
+        meta: 'color: #ff79c6;',
+        addition: 'color: #50fa7b;',
+        deletion: 'color: #ff5555;'
+      }
+    };
+
+    // DOM References
+    const markdownInput = document.getElementById('markdown-input');
+    const previewBody = document.getElementById('preview-body');
+    const previewTitle = document.getElementById('preview-title');
+    const previewAuthor = document.getElementById('preview-author');
+
+    const styleThemeSelect = document.getElementById('style-theme');
+    const highlightThemeSelect = document.getElementById('highlight-theme');
+    const fontSizeSelect = document.getElementById('font-size-select');
+    const authorInput = document.getElementById('author-input');
+    const templateSelect = document.getElementById('template-select');
+    const dynamicHljsStyle = document.getElementById('dynamic-hljs-style');
+
+    const copyBtn = document.getElementById('copy-btn');
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const toast = document.getElementById('toast');
+
+    // State Variables
+    let isDarkTheme = true;
+    let selectedStyleTheme = 'elegant-blue';
+    let selectedHighlightTheme = 'atom-one-dark';
+    let selectedFontSize = '15px';
+
+    // Configure Marked
+    marked.setOptions({
+      gfm: true,
+      breaks: true,
+      highlight: function (code, lang) {
+        const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+        return hljs.highlight(code, { language }).value;
+      }
+    });
+
+    // Event Listeners
+    markdownInput.addEventListener('input', renderPreview);
+    authorInput.addEventListener('input', () => {
+      previewAuthor.textContent = authorInput.value;
+    });
+
+    styleThemeSelect.addEventListener('change', () => {
+      selectedStyleTheme = styleThemeSelect.value;
+
+      // Update primary color style property
+      const primaryColor = styleThemes[selectedStyleTheme].primary;
+      document.documentElement.style.setProperty('--theme-color', primaryColor);
+
+      renderPreview();
+    });
+
+    highlightThemeSelect.addEventListener('change', () => {
+      selectedHighlightTheme = highlightThemeSelect.value;
+      updateDynamicStyles();
+      renderPreview();
+    });
+
+    fontSizeSelect.addEventListener('change', () => {
+      selectedFontSize = fontSizeSelect.value;
+      renderPreview();
+    });
+
+    templateSelect.addEventListener('change', () => {
+      const templateName = templateSelect.value;
+      if (templates[templateName]) {
+        markdownInput.value = templates[templateName];
+
+        // Auto update title based on header
+        const firstLine = templates[templateName].split('\n')[0];
+        if (firstLine.startsWith('# ')) {
+          previewTitle.textContent = firstLine.substring(2);
+        }
+
+        renderPreview();
+      }
+    });
+
+    themeToggleBtn.addEventListener('click', () => {
+      isDarkTheme = !isDarkTheme;
+      if (isDarkTheme) {
+        document.body.classList.remove('light-theme');
+        themeToggleBtn.innerHTML = '<i class="fa-solid fa-moon"></i> 暗黑模式';
+      } else {
+        document.body.classList.add('light-theme');
+        themeToggleBtn.innerHTML = '<i class="fa-solid fa-sun"></i> 明亮模式';
+      }
+    });
+
+    copyBtn.addEventListener('click', copyStyledHTML);
+
+    // Dynamic style updating based on highlight theme
+    function updateDynamicStyles() {
+      const hlTheme = codeThemesInline[selectedHighlightTheme];
+      const isDarkCodeBg = selectedHighlightTheme !== 'github';
+
+      // Inject preview-only hljs class styles into dynamic-hljs-style block
+      dynamicHljsStyle.textContent = `
+        .rendered-content pre {
+          background: ${hlTheme.background} !important;
+          color: ${hlTheme.textColor} !important;
+        }
+        .code-header {
+          background: ${hlTheme.headerBackground} !important;
+          border-bottom: 1px solid ${isDarkCodeBg ? '#3e4451' : '#d1d5da'} !important;
+        }
+        .code-lang {
+          color: ${isDarkCodeBg ? '#abb2bf' : '#586069'} !important;
+        }
+        .hljs-comment, .hljs-quote { ${hlTheme.comment} }
+        .hljs-keyword, .hljs-selector-tag { ${hlTheme.keyword} }
+        .hljs-literal, .hljs-symbol, .hljs-bullet { ${hlTheme.literal} }
+        .hljs-section, .hljs-link { ${hlTheme.section} }
+        .hljs-string, .hljs-addition { ${hlTheme.string} }
+        .hljs-title, .hljs-title.function { ${hlTheme.title} }
+        .hljs-title.class, .hljs-type, .hljs-built_in { ${hlTheme.type} }
+        .hljs-number, .hljs-attribute { ${hlTheme.number} }
+        .hljs-meta { ${hlTheme.meta} }
+      `;
+    }
+
+    // Markdown insert utility
+    function insertFormat(startTag, endTag) {
+      const start = markdownInput.selectionStart;
+      const end = markdownInput.selectionEnd;
+      const text = markdownInput.value;
+      const selected = text.substring(start, end);
+      const replacement = startTag + selected + endTag;
+      markdownInput.value = text.substring(0, start) + replacement + text.substring(end);
+      markdownInput.focus();
+      markdownInput.selectionStart = start + startTag.length;
+      markdownInput.selectionEnd = start + startTag.length + selected.length;
+      renderPreview();
+    }
+
+    // Render Preview
+    function renderPreview() {
+      const mdText = markdownInput.value;
+      let htmlContent = '';
+
+      // Parse markdown to HTML
+      if (mdText) {
+        htmlContent = marked.parse(mdText);
+      }
+
+      // Inject and render
+      previewBody.innerHTML = htmlContent;
+
+      // Set title from the first heading if exists, and strip it from the body
+      const firstHeading = previewBody.querySelector('h1');
+      if (firstHeading && mdText.trim().startsWith('# ')) {
+        previewTitle.textContent = firstHeading.textContent;
+        firstHeading.remove();
+      }
+
+      // Add Mac-style headers to code blocks in the DOM preview
+      const codeBlocks = previewBody.querySelectorAll('pre');
+      codeBlocks.forEach(pre => {
+        const codeElement = pre.querySelector('code');
+        const langClass = Array.from(codeElement.classList).find(c => c.startsWith('language-'));
+        const lang = langClass ? langClass.replace('language-', '') : 'code';
+
+        // Wrap pre in code-block-wrapper
+        const wrapper = document.createElement('div');
+        wrapper.className = 'code-block-wrapper';
+
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        header.innerHTML = `
+          <div class="mac-dots">
+            <span class="mac-dot red"></span>
+            <span class="mac-dot yellow"></span>
+            <span class="mac-dot green"></span>
+          </div>
+          <span class="code-lang">${lang}</span>
+        `;
+
+        pre.parentNode.insertBefore(wrapper, pre);
+        wrapper.appendChild(header);
+        wrapper.appendChild(pre);
+      });
+
+      // Apply base class-level font sizes inside the preview for visual fidelity
+      previewBody.style.fontSize = selectedFontSize;
+    }
+
+    // Build WeChat Styled HTML by converting classes to Inline CSS styles
+    function getWeChatStyledHTML() {
+      // Create a temporary element to hold the preview content
+      const tempContainer = document.createElement('div');
+      tempContainer.innerHTML = previewBody.innerHTML;
+
+      // Themes
+      const styleTheme = styleThemes[selectedStyleTheme];
+      const hlTheme = codeThemesInline[selectedHighlightTheme];
+      const isDarkCodeBg = selectedHighlightTheme !== 'github';
+
+      // 1. Inline all standard markdown elements
+      tempContainer.querySelectorAll('p').forEach(p => {
+        p.setAttribute('style', styleTheme.p + ` font-size: ${selectedFontSize};`);
+      });
+
+      tempContainer.querySelectorAll('h1').forEach(h => {
+        h.setAttribute('style', styleTheme.h1);
+      });
+
+      tempContainer.querySelectorAll('h2').forEach(h => {
+        h.setAttribute('style', styleTheme.h2);
+      });
+
+      tempContainer.querySelectorAll('h3').forEach(h => {
+        h.setAttribute('style', styleTheme.h3);
+      });
+
+      tempContainer.querySelectorAll('blockquote').forEach(bq => {
+        bq.setAttribute('style', 'border-left: 4px solid #cbcbcb; padding: 10px 15px; background: #f8f8f8; color: #666666; margin: 1.25em 0; border-radius: 4px;');
+        bq.querySelectorAll('p').forEach(p => {
+          p.setAttribute('style', 'margin: 0; color: #666666; font-size: 15px; line-height: 1.6;');
+        });
+      });
+
+      tempContainer.querySelectorAll('ul').forEach(ul => {
+        ul.setAttribute('style', 'padding-left: 20px; margin: 1.25em 0; color: #333333;');
+      });
+
+      tempContainer.querySelectorAll('ol').forEach(ol => {
+        ol.setAttribute('style', 'padding-left: 20px; margin: 1.25em 0; color: #333333;');
+      });
+
+      tempContainer.querySelectorAll('li').forEach(li => {
+        li.setAttribute('style', 'margin-bottom: 6px; line-height: 1.6;');
+      });
+
+      tempContainer.querySelectorAll('p code').forEach(inlineCode => {
+        inlineCode.setAttribute('style', 'background: #f3f4f6; color: #ea580c; padding: 2px 6px; border-radius: 4px; font-family: Consolas, Monaco, monospace; font-size: 13px;');
+      });
+
+      // 2. Inline Highlight.js code highlights
+      tempContainer.querySelectorAll('.code-block-wrapper').forEach(wrapper => {
+        wrapper.setAttribute('style', 'margin: 1.5em 0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); border: 1px solid #e5e7eb;');
+
+        const header = wrapper.querySelector('.code-header');
+        if (header) {
+          const borderStyle = isDarkCodeBg ? 'border-bottom: 1px solid #3e4451;' : 'border-bottom: 1px solid #d1d5da;';
+          header.setAttribute('style', `background: ${hlTheme.headerBackground}; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; ${borderStyle}`);
+
+          header.querySelector('.mac-dots').setAttribute('style', 'display: flex; gap: 6px;');
+          header.querySelectorAll('.mac-dot').forEach(dot => {
+            let color = '#ff5f56';
+            if (dot.classList.contains('yellow')) color = '#ffbd2e';
+            if (dot.classList.contains('green')) color = '#27c93f';
+            dot.setAttribute('style', `width: 10px; height: 10px; border-radius: 50%; background: ${color};`);
+          });
+
+          const langColor = isDarkCodeBg ? 'color: #abb2bf;' : 'color: #586069;';
+          header.querySelector('.code-lang').setAttribute('style', `font-family: inherit; font-size: 11px; ${langColor} text-transform: uppercase; font-weight: bold; letter-spacing: 0.05em;`);
+        }
+
+        const pre = wrapper.querySelector('pre');
+        if (pre) {
+          pre.setAttribute('style', hlTheme.pre);
+
+          const code = pre.querySelector('code');
+          if (code) {
+            code.setAttribute('style', 'font-family: Consolas, Monaco, monospace; font-size: 13px; line-height: 1.5; display: block; overflow-x: auto;');
+
+            // Map each highlight.js token class to inline style
+            const spans = code.querySelectorAll('span');
+            spans.forEach(span => {
+              // Extract the class names
+              const classes = Array.from(span.classList);
+              let combinedStyle = '';
+
+              classes.forEach(cls => {
+                if (cls.startsWith('hljs-')) {
+                  const tokenName = cls.replace('hljs-', '');
+                  // Check direct matches or nested token styles
+                  if (hlTheme[tokenName]) {
+                    combinedStyle += hlTheme[tokenName] + ' ';
+                  } else {
+                    // Fallback general styling matching common hljs tokens
+                    const generalMap = {
+                      'keyword': 'color: #ff79c6;',
+                      'string': 'color: #f1fa8c;',
+                      'number': 'color: #bd93f9;',
+                      'comment': 'color: #6272a4; font-style: italic;',
+                      'built_in': 'color: #8be9fd;',
+                      'title': 'color: #50fa7b;'
+                    };
+                    if (generalMap[tokenName]) {
+                      combinedStyle += generalMap[tokenName] + ' ';
+                    }
+                  }
+                }
+              });
+
+              if (combinedStyle) {
+                span.setAttribute('style', combinedStyle.trim());
+              }
+            });
+          }
+        }
+      });
+
+      return tempContainer.innerHTML;
+    }
+
+    // Copy to Clipboard as Rich Text / HTML
+    async function copyStyledHTML() {
+      try {
+        const html = getWeChatStyledHTML();
+
+        // Construct standard html wrapper for clipboard rich text
+        const htmlWrapper = `
+          <div style="font-family: -apple-system-font, BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif; max-width: 100%; box-sizing: border-box; word-wrap: break-word;">
+            ${html}
+          </div>
+        `;
+
+        // Create Blob for text/html
+        const htmlBlob = new Blob([htmlWrapper], { type: 'text/html' });
+        // Create Blob for text/plain (as fallback)
+        const textBlob = new Blob([markdownInput.value], { type: 'text/plain' });
+
+        const clipboardItem = new ClipboardItem({
+          'text/html': htmlBlob,
+          'text/plain': textBlob
+        });
+
+        await navigator.clipboard.write([clipboardItem]);
+
+        // Show Toast
+        toast.classList.add('show');
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 2500);
+
+      } catch (err) {
+        console.error('Failed to copy text: ', err);
+        alert('复制失败，请尝试手动选择预览区域并复制。错误信息: ' + err.message);
+      }
+    }
+
+    // Initialize
+    updateDynamicStyles();
+    markdownInput.value = templates.default;
+    renderPreview();
+  </script>
+</body>
+
+</html>

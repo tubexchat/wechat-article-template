@@ -1,0 +1,12 @@
+{
+  "name": "wechat-article-template",
+  "version": "1.0.0",
+  "description": "WeChat Article Markdown Editor with Syntax Highlighting and Inline CSS Styling",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {},
+  "author": "张伟",
+  "license": "MIT"
+}
