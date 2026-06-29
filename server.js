@@ -19,10 +19,10 @@ const MIME_TYPES = {
 const server = http.createServer((req, res) => {
   console.log(`${req.method} ${req.url}`);
 
-  // Normalize and resolve the request path
-  let filePath = '.' + req.url;
-  if (filePath === './') {
-    filePath = './index.html';
+  // Normalize and resolve the request path (static assets live in ./public)
+  let filePath = './public' + req.url;
+  if (filePath === './public/') {
+    filePath = './public/index.html';
   }
 
   const extname = String(path.extname(filePath)).toLowerCase();
