@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <meta name="theme-color" content="#6366f1">
+  <meta name="theme-color" content="#07C160">
 
   <!-- Typography & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,8 +34,8 @@
       --bg-tertiary: #1f2937;
       --text-main: #f3f4f6;
       --text-muted: #9ca3af;
-      --accent-color: #6366f1;
-      --accent-hover: #4f46e5;
+      --accent-color: #07C160;
+      --accent-hover: #06AD56;
       --border-color: #374151;
       --glass-bg: rgba(17, 24, 39, 0.7);
       --glass-border: rgba(255, 255, 255, 0.08);
@@ -49,8 +49,8 @@
       --bg-tertiary: #f9fafb;
       --text-main: #1f2937;
       --text-muted: #6b7280;
-      --accent-color: #4f46e5;
-      --accent-hover: #4338ca;
+      --accent-color: #07C160;
+      --accent-hover: #06AD56;
       --border-color: #e5e7eb;
       --glass-bg: rgba(255, 255, 255, 0.8);
       --glass-border: rgba(0, 0, 0, 0.08);
@@ -120,7 +120,7 @@
     .logo-title {
       font-size: 1.25rem;
       font-weight: 700;
-      background: linear-gradient(135deg, var(--accent-color), #a78bfa);
+      background: linear-gradient(135deg, var(--accent-color), #34d399);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -154,7 +154,7 @@
 
     .theme-toggle-btn:hover, .action-btn:hover {
       border-color: var(--accent-color);
-      background: rgba(99, 102, 241, 0.1);
+      background: rgba(7, 193, 96, 0.1);
     }
 
     /* Main Layout */
@@ -375,7 +375,7 @@
     }
 
     .wechat-author-info .wechat-link {
-      color: var(--theme-color, #6366f1);
+      color: var(--theme-color, #07C160);
       font-weight: bold;
       text-decoration: none;
     }
@@ -396,8 +396,8 @@
       line-height: 1.4;
     }
 
-    .rendered-content h1 { font-size: 20px; border-bottom: 2px solid var(--theme-color, #6366f1); padding-bottom: 4px; }
-    .rendered-content h2 { font-size: 18px; border-left: 4px solid var(--theme-color, #6366f1); padding-left: 8px; }
+    .rendered-content h1 { font-size: 20px; border-bottom: 2px solid var(--theme-color, #07C160); padding-bottom: 4px; }
+    .rendered-content h2 { font-size: 18px; border-left: 4px solid var(--theme-color, #07C160); padding-left: 8px; }
     .rendered-content h3 { font-size: 16px; }
 
     .rendered-content blockquote {
@@ -475,10 +475,10 @@
 
     /* Body links follow the active theme color */
     .rendered-content a {
-      color: var(--theme-color, #6366f1);
+      color: var(--theme-color, #07C160);
       text-decoration: none;
       font-weight: 500;
-      border-bottom: 1px solid var(--theme-color, #6366f1);
+      border-bottom: 1px solid var(--theme-color, #07C160);
     }
 
     /* Tables — font is kept ~2px smaller than body (set dynamically in JS) */
@@ -542,7 +542,7 @@
     }
   </style>
 </head>
-<body>
+<body class="light-theme">
 
   <!-- Top Header -->
   <header>
@@ -557,7 +557,7 @@
         <i class="fa-regular fa-copy"></i> 一键复制公众号格式
       </button>
       <button class="theme-toggle-btn" id="theme-toggle">
-        <i class="fa-solid fa-moon"></i> 暗黑模式
+        <i class="fa-solid fa-sun"></i> 明亮模式
       </button>
     </div>
   </header>
@@ -1063,7 +1063,7 @@ fetchUsers("v1/active-users").then(activeUsers => {
     const toast = document.getElementById('toast');
 
     // State Variables
-    let isDarkTheme = true;
+    let isDarkTheme = false;
     let selectedStyleTheme = 'minimalist-default';
     let selectedHighlightTheme = 'atom-one-dark';
     let selectedFontSize = '15px';
