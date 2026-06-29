@@ -1108,7 +1108,7 @@ fetchUsers("v1/active-users").then(activeUsers => {
 
     fontSizeSelect.addEventListener('change', () => {
       selectedFontSize = fontSizeSelect.value;
-      localStorage.setItem('wechat_markdown_font_size', selectedFontSize);
+      localStorage.setItem('wechat_markdown_font_size_v2', selectedFontSize);
       renderPreview();
     });
 
@@ -1448,7 +1448,7 @@ fetchUsers("v1/active-users").then(activeUsers => {
       const savedAuthor = localStorage.getItem('wechat_markdown_author');
       const savedStyleTheme = localStorage.getItem('wechat_markdown_style_theme');
       const savedHighlightTheme = localStorage.getItem('wechat_markdown_highlight_theme');
-      const savedFontSize = localStorage.getItem('wechat_markdown_font_size');
+      const savedFontSize = localStorage.getItem('wechat_markdown_font_size_v2');
 
       if (savedContent !== null) {
         markdownInput.value = savedContent;
