@@ -849,12 +849,12 @@ fetchUsers("v1/active-users").then(activeUsers => {
           `<h2 style="font-size:17px;font-weight:bold;color:${t.dark};margin:34px 0 20px;padding:2px 0 12px 12px;border-left:4px solid ${t.primary};border-bottom:1px dashed ${t.dashed};line-height:1.4;letter-spacing:${t.letterSpacing};">${inner}</h2>`,
         // 数字徽章 + 下方居中标题（格隆汇）
         badge: (inner, t, n) =>
-          `<section style="text-align:center;margin:38px 0 24px;"><span style="display:inline-block;min-width:42px;background:${t.primary};color:#fff;font-size:24px;font-weight:bold;padding:7px 14px;border-radius:6px;line-height:1.1;box-shadow:5px 5px 0 ${t.primarySoft};">${pad2(n)}</span><p style="margin:16px 0 0;font-size:18px;font-weight:bold;color:${t.primary};letter-spacing:1px;">${inner}</p></section>`,
+          `<section style="text-align:center;margin:38px 0 24px;"><span style="display:inline-block;min-width:42px;background:${t.primary};color:#fff;font-size:24px;font-weight:bold;padding:7px 14px;border-radius:6px;line-height:1.1;box-shadow:5px 5px 0 ${t.primarySoft};">${pad2(n)}</span><p style="text-align:center;margin:16px 0 0;font-size:18px;font-weight:bold;color:${t.primary};letter-spacing:1px;">${inner}</p></section>`,
         // 金线 + 大号数字 + 下方居中标题（腾讯云）
         decoLines: (inner, t, n) => {
           const line = `<span style="display:inline-block;vertical-align:middle;width:38px;height:2px;background:${t.accent};"></span>`;
           const dot = `<span style="display:inline-block;vertical-align:middle;width:6px;height:6px;border-radius:50%;background:${t.accent};margin:0 7px;"></span>`;
-          return `<section style="text-align:center;margin:38px 0 24px;"><p style="margin:0;line-height:1;">${line}${dot}<span style="display:inline-block;vertical-align:middle;font-size:30px;font-weight:bold;color:${t.dark};">${pad2(n)}</span>${dot}${line}</p><p style="margin:14px 0 0;font-size:18px;font-weight:bold;color:${t.primary};letter-spacing:1px;">${inner}</p></section>`;
+          return `<section style="text-align:center;margin:38px 0 24px;"><p style="text-align:center;margin:0;line-height:1;">${line}${dot}<span style="display:inline-block;vertical-align:middle;font-size:30px;font-weight:bold;color:${t.dark};">${pad2(n)}</span>${dot}${line}</p><p style="text-align:center;margin:14px 0 0;font-size:18px;font-weight:bold;color:${t.primary};letter-spacing:1px;">${inner}</p></section>`;
         },
         // 紫色加粗 + 底部细线（印象笔记）
         ruledBottom: (inner, t) =>
