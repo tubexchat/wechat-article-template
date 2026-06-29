@@ -4,7 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>微信公众号 Markdown 排版与语法高亮工具</title>
-  
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="theme-color" content="#6366f1">
+
   <!-- Typography & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -102,8 +110,10 @@
     }
 
     .logo-icon {
-      font-size: 1.5rem;
-      color: var(--accent-color);
+      width: 2.125rem;
+      height: 2.125rem;
+      display: block;
+      border-radius: 8px;
       animation: pulse 2s infinite alternate;
     }
 
@@ -507,7 +517,7 @@
   <!-- Top Header -->
   <header>
     <div class="logo-container">
-      <i class="fa-solid fa-code-merge logo-icon"></i>
+      <img src="logo.svg" alt="老张的微信公众号编辑器 Logo" class="logo-icon" width="34" height="34">
       <span class="logo-title">老张的微信公众号编辑器</span>
       <span class="logo-tagline">献给每一位热爱开源的朋友们</span>
     </div>
