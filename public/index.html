@@ -788,40 +788,96 @@ fetchUsers("v1/active-users").then(activeUsers => {
         h3: 'color: #111827; margin: 1.6em 0 0.8em 0; font-size: 16px; font-weight: bold;',
         p: 'color: #374151; font-size: 15px; line-height: 1.75; margin: 1.25em 0; text-align: justify;'
       },
-      // ---------- 品牌主题（从旧版 themes.js 恢复）----------
-      // Binance · 币安金：金色胶囊标题 + 金色左边栏小标题
+      // ---------- 品牌主题（从旧版 themes.js + convert.js 恢复）----------
+      // 这些主题带独立的 H1/H2 版式：h1Layout / h2Layout 指向 headingRenderers，
+      // numbered 控制小节(##)是否自动编号 01/02。其余颜色 token 供渲染器使用。
+      // Binance · 币安金：金色胶囊 H1 + 金色左竖条虚线 H2
       'binance': {
-        primary: '#F0B90B',
-        h1: 'display: inline-block; background: #F0B90B; color: #181A20; padding: 4px 16px; border-radius: 6px; margin: 1.6em 0 0.8em 0; font-size: 20px; font-weight: bold;',
-        h2: 'border-left: 4px solid #F0B90B; color: #181A20; padding-left: 8px; margin: 1.6em 0 0.8em 0; font-size: 18px; font-weight: bold;',
-        h3: 'color: #181A20; margin: 1.6em 0 0.8em 0; font-size: 16px; font-weight: bold;',
-        p: 'color: #1A1A1A; font-size: 15px; line-height: 1.75; margin: 1.25em 0; text-align: justify;'
+        primary: '#F0B90B', dark: '#181A20', primarySoft: '#FEF6D8',
+        accent: '#F0B90B', dashed: '#D0D3D6', letterSpacing: '0.5px',
+        h1Layout: 'capsule', h2Layout: 'leftbar', numbered: false,
+        h3: 'color: #B88A00; margin: 26px 0 12px; font-size: 16px; font-weight: bold;',
+        p: 'color: #1A1A1A; font-size: 15px; line-height: 1.75; margin: 16px 0; text-align: justify;'
       },
-      // 格隆汇 · 蓝：居中下划线标题 + 蓝色徽章小标题
+      // 格隆汇 · 蓝：居中下划线 H1 + 蓝色数字徽章 H2（自动编号）
       'gelonghui': {
-        primary: '#2E8FE0',
-        h1: 'text-align: center; color: #1A2A3A; border-bottom: 2px solid #2E8FE0; padding-bottom: 6px; margin: 1.6em 0 0.8em 0; font-size: 20px; font-weight: bold;',
-        h2: 'display: inline-block; background: #2E8FE0; color: #ffffff; padding: 3px 12px; border-radius: 4px; margin: 1.6em 0 0.8em 0; font-size: 18px; font-weight: bold;',
-        h3: 'color: #2477C4; margin: 1.6em 0 0.8em 0; font-size: 16px; font-weight: bold;',
-        p: 'color: #3C4043; font-size: 15px; line-height: 1.75; margin: 1.25em 0; text-align: justify;'
+        primary: '#2E8FE0', dark: '#1A2A3A', primarySoft: '#EAF4FD',
+        accent: '#2E8FE0', dashed: '#D0D8E0', letterSpacing: '0.5px',
+        h1Layout: 'underlineCenter', h2Layout: 'badge', numbered: true,
+        h3: 'color: #2477C4; margin: 26px 0 12px; font-size: 16px; font-weight: bold;',
+        p: 'color: #3C4043; font-size: 15px; line-height: 1.75; margin: 16px 0; text-align: justify;'
       },
-      // 腾讯云 · 蓝金线：蓝标题 + 金色装饰线
+      // 腾讯云 · 蓝金线：居中下划线 H1 + 金线大号数字 H2（自动编号）
       'tencent': {
-        primary: '#0B66C3',
-        h1: 'text-align: center; color: #0B66C3; border-bottom: 2px solid #F5B500; padding-bottom: 6px; margin: 1.6em 0 0.8em 0; font-size: 20px; font-weight: bold;',
-        h2: 'border-left: 4px solid #F5B500; color: #0B66C3; padding-left: 8px; margin: 1.6em 0 0.8em 0; font-size: 18px; font-weight: bold;',
-        h3: 'color: #1F2329; margin: 1.6em 0 0.8em 0; font-size: 16px; font-weight: bold;',
-        p: 'color: #3C4043; font-size: 15px; line-height: 1.75; margin: 1.25em 0; text-align: justify;'
+        primary: '#0B66C3', dark: '#1F2329', primarySoft: '#EAF2FC',
+        accent: '#F5B500', dashed: '#D5DAE0', letterSpacing: '0.5px',
+        h1Layout: 'underlineCenter', h2Layout: 'decoLines', numbered: true,
+        h3: 'color: #0B66C3; margin: 26px 0 12px; font-size: 16px; font-weight: bold;',
+        p: 'color: #3C4043; font-size: 15px; line-height: 1.75; margin: 16px 0; text-align: justify;'
       },
-      // 印象笔记 · 紫：宋体衬线 + 上下横线标题
+      // 印象笔记 · 紫：宋体衬线，上下双横线 H1 + 紫色底细线 H2
       'evernote': {
-        primary: '#7E3F98',
-        h1: "text-align: center; color: #7E3F98; border-top: 2px solid #7E3F98; border-bottom: 2px solid #7E3F98; padding: 6px 0; margin: 1.6em 0 0.8em 0; font-size: 20px; font-weight: bold; font-family: 'Songti SC','STSong','SimSun','Noto Serif SC',Georgia,serif;",
-        h2: "color: #7E3F98; border-bottom: 2px solid #DFD3EA; padding-bottom: 4px; margin: 1.6em 0 0.8em 0; font-size: 18px; font-weight: bold; font-family: 'Songti SC','STSong','SimSun','Noto Serif SC',Georgia,serif;",
-        h3: "color: #7E3F98; margin: 1.6em 0 0.8em 0; font-size: 16px; font-weight: bold; font-family: 'Songti SC','STSong','SimSun','Noto Serif SC',Georgia,serif;",
-        p: "color: #1A1A1A; font-size: 15px; line-height: 1.85; margin: 1.25em 0; text-align: justify; font-family: 'Songti SC','STSong','SimSun','Noto Serif SC',Georgia,serif;"
+        primary: '#7E3F98', dark: '#1A1A1A', primarySoft: '#F3ECF7',
+        accent: '#7E3F98', dashed: '#DFD3EA', letterSpacing: '0.5px',
+        h1Layout: 'ruled', h2Layout: 'ruledBottom', numbered: false,
+        h3: "color: #7E3F98; margin: 26px 0 12px; font-size: 16px; font-weight: bold; font-family: 'Songti SC','STSong','SimSun','Noto Serif SC',Georgia,serif;",
+        p: "color: #1A1A1A; font-size: 15px; line-height: 1.85; margin: 16px 0; text-align: justify; font-family: 'Songti SC','STSong','SimSun','Noto Serif SC',Georgia,serif;"
       }
     };
+
+    // Brand-theme heading renderers, ported verbatim from the old convert.js.
+    // Each returns a fully inline-styled HTML string that REPLACES the <h1>/<h2>,
+    // giving every brand theme its own distinctive heading layout.
+    const BRAND_THEMES = ['binance', 'gelonghui', 'tencent', 'evernote'];
+    const pad2 = (n) => String(n).padStart(2, '0');
+
+    const headingRenderers = {
+      h1: {
+        // 居中金色胶囊（币安）
+        capsule: (inner, t) =>
+          `<p style="text-align:center;margin:34px 0 26px;"><span style="display:inline-block;background:${t.primary};color:${t.dark};font-size:18px;font-weight:bold;padding:10px 24px;border-radius:8px;letter-spacing:1px;line-height:1.5;">${inner}</span></p>`,
+        // 居中加粗 + 下划线（格隆汇 / 腾讯云）
+        underlineCenter: (inner, t) =>
+          `<p style="text-align:center;margin:34px 0 26px;"><span style="display:inline-block;font-size:21px;font-weight:bold;color:${t.primary};padding-bottom:8px;border-bottom:3px solid ${t.primary};letter-spacing:1px;">${inner}</span></p>`,
+        // 居中 + 上下双横线（印象笔记）
+        ruled: (inner, t) =>
+          `<section style="text-align:center;margin:34px 0 26px;padding:14px 0;border-top:2px solid ${t.primary};border-bottom:2px solid ${t.primary};"><span style="font-size:22px;font-weight:bold;color:${t.primary};letter-spacing:2px;">${inner}</span></section>`,
+      },
+      h2: {
+        // 左侧竖条 + 底部虚线（币安）
+        leftbar: (inner, t) =>
+          `<h2 style="font-size:17px;font-weight:bold;color:${t.dark};margin:34px 0 20px;padding:2px 0 12px 12px;border-left:4px solid ${t.primary};border-bottom:1px dashed ${t.dashed};line-height:1.4;letter-spacing:${t.letterSpacing};">${inner}</h2>`,
+        // 数字徽章 + 下方居中标题（格隆汇）
+        badge: (inner, t, n) =>
+          `<section style="text-align:center;margin:38px 0 24px;"><span style="display:inline-block;min-width:42px;background:${t.primary};color:#fff;font-size:24px;font-weight:bold;padding:7px 14px;border-radius:6px;line-height:1.1;box-shadow:5px 5px 0 ${t.primarySoft};">${pad2(n)}</span><p style="margin:16px 0 0;font-size:18px;font-weight:bold;color:${t.primary};letter-spacing:1px;">${inner}</p></section>`,
+        // 金线 + 大号数字 + 下方居中标题（腾讯云）
+        decoLines: (inner, t, n) => {
+          const line = `<span style="display:inline-block;vertical-align:middle;width:38px;height:2px;background:${t.accent};"></span>`;
+          const dot = `<span style="display:inline-block;vertical-align:middle;width:6px;height:6px;border-radius:50%;background:${t.accent};margin:0 7px;"></span>`;
+          return `<section style="text-align:center;margin:38px 0 24px;"><p style="margin:0;line-height:1;">${line}${dot}<span style="display:inline-block;vertical-align:middle;font-size:30px;font-weight:bold;color:${t.dark};">${pad2(n)}</span>${dot}${line}</p><p style="margin:14px 0 0;font-size:18px;font-weight:bold;color:${t.primary};letter-spacing:1px;">${inner}</p></section>`;
+        },
+        // 紫色加粗 + 底部细线（印象笔记）
+        ruledBottom: (inner, t) =>
+          `<h2 style="font-size:18px;font-weight:bold;color:${t.primary};margin:32px 0 18px;padding-bottom:10px;border-bottom:1px solid ${t.dashed};letter-spacing:${t.letterSpacing};">${inner}</h2>`,
+      }
+    };
+
+    // Replace every <h1>/<h2> inside `container` with the brand theme's
+    // distinctive heading HTML (in place). No-op for non-brand themes.
+    function applyBrandHeadings(container, themeKey) {
+      if (!BRAND_THEMES.includes(themeKey)) return;
+      const t = styleThemes[themeKey];
+      const h1r = headingRenderers.h1[t.h1Layout];
+      if (h1r) container.querySelectorAll('h1').forEach(h => { h.outerHTML = h1r(h.innerHTML, t); });
+      const h2r = headingRenderers.h2[t.h2Layout];
+      if (h2r) {
+        let counter = 0;
+        container.querySelectorAll('h2').forEach(h => {
+          const n = t.numbered ? ++counter : null;
+          h.outerHTML = h2r(h.innerHTML, t, n);
+        });
+      }
+    }
 
     // Syntax highlight inline css maps for different highlight themes
     const codeThemesInline = {
@@ -1100,6 +1156,10 @@ fetchUsers("v1/active-users").then(activeUsers => {
         firstHeading.remove();
       }
 
+      // Apply brand-theme heading layouts (capsule/badge/deco-lines/etc.).
+      // Produces fully inline-styled HTML, so the copy step inherits it too.
+      applyBrandHeadings(previewBody, selectedStyleTheme);
+
       // Add Mac-style headers to code blocks in the DOM preview
       const codeBlocks = previewBody.querySelectorAll('pre');
       codeBlocks.forEach(pre => {
@@ -1150,19 +1210,26 @@ fetchUsers("v1/active-users").then(activeUsers => {
       const styleTheme = styleThemes[selectedStyleTheme];
       const hlTheme = codeThemesInline[selectedHighlightTheme];
       const isDarkCodeBg = selectedHighlightTheme !== 'github';
+      // Brand themes already carry fully inline-styled headings (and the
+      // <p> inside numbered-badge sections) from applyBrandHeadings — don't
+      // clobber them. Only style elements that aren't already inlined.
+      const isBrand = BRAND_THEMES.includes(selectedStyleTheme);
 
       // 1. Inline all standard markdown elements
       tempContainer.querySelectorAll('p').forEach(p => {
+        if (p.getAttribute('style')) return; // preserve brand-rendered paragraphs
         p.setAttribute('style', styleTheme.p + ` font-size: ${selectedFontSize};`);
       });
 
-      tempContainer.querySelectorAll('h1').forEach(h => {
-        h.setAttribute('style', styleTheme.h1);
-      });
+      if (!isBrand) {
+        tempContainer.querySelectorAll('h1').forEach(h => {
+          h.setAttribute('style', styleTheme.h1);
+        });
 
-      tempContainer.querySelectorAll('h2').forEach(h => {
-        h.setAttribute('style', styleTheme.h2);
-      });
+        tempContainer.querySelectorAll('h2').forEach(h => {
+          h.setAttribute('style', styleTheme.h2);
+        });
+      }
 
       tempContainer.querySelectorAll('h3').forEach(h => {
         h.setAttribute('style', styleTheme.h3);
