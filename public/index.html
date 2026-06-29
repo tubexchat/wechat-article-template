@@ -819,6 +819,7 @@ fetchUsers("v1/active-users").then(activeUsers => {
       'evernote': {
         primary: '#7E3F98', dark: '#1A1A1A', primarySoft: '#F3ECF7',
         accent: '#7E3F98', dashed: '#DFD3EA', letterSpacing: '0.5px',
+        fontFamily: "'Songti SC','STSong','SimSun','Noto Serif SC',Georgia,serif",
         h1Layout: 'ruled', h2Layout: 'ruledBottom', numbered: false,
         h3: "color: #7E3F98; margin: 26px 0 12px; font-size: 16px; font-weight: bold; font-family: 'Songti SC','STSong','SimSun','Noto Serif SC',Georgia,serif;",
         p: "color: #1A1A1A; font-size: 15px; line-height: 1.85; margin: 16px 0; text-align: justify; font-family: 'Songti SC','STSong','SimSun','Noto Serif SC',Georgia,serif;"
@@ -830,6 +831,8 @@ fetchUsers("v1/active-users").then(activeUsers => {
     // giving every brand theme its own distinctive heading layout.
     const BRAND_THEMES = ['binance', 'gelonghui', 'tencent', 'evernote'];
     const pad2 = (n) => String(n).padStart(2, '0');
+    // Optional per-theme font stack (印象笔记 uses 宋体/serif). Empty for the rest.
+    const themeFont = (t) => (t.fontFamily ? `font-family:${t.fontFamily};` : '');
 
     const headingRenderers = {
       h1: {
@@ -841,7 +844,7 @@ fetchUsers("v1/active-users").then(activeUsers => {
           `<p style="text-align:center;margin:34px 0 26px;"><span style="display:inline-block;font-size:21px;font-weight:bold;color:${t.primary};padding-bottom:8px;border-bottom:3px solid ${t.primary};letter-spacing:1px;">${inner}</span></p>`,
         // 居中 + 上下双横线（印象笔记）
         ruled: (inner, t) =>
-          `<section style="text-align:center;margin:34px 0 26px;padding:14px 0;border-top:2px solid ${t.primary};border-bottom:2px solid ${t.primary};"><span style="font-size:22px;font-weight:bold;color:${t.primary};letter-spacing:2px;">${inner}</span></section>`,
+          `<section style="text-align:center;margin:34px 0 26px;padding:14px 0;border-top:2px solid ${t.primary};border-bottom:2px solid ${t.primary};"><span style="font-size:22px;font-weight:bold;color:${t.primary};letter-spacing:2px;${themeFont(t)}">${inner}</span></section>`,
       },
       h2: {
         // 左侧竖条 + 底部虚线（币安）
@@ -858,7 +861,7 @@ fetchUsers("v1/active-users").then(activeUsers => {
         },
         // 紫色加粗 + 底部细线（印象笔记）
         ruledBottom: (inner, t) =>
-          `<h2 style="font-size:18px;font-weight:bold;color:${t.primary};margin:32px 0 18px;padding-bottom:10px;border-bottom:1px solid ${t.dashed};letter-spacing:${t.letterSpacing};">${inner}</h2>`,
+          `<h2 style="font-size:18px;font-weight:bold;color:${t.primary};margin:32px 0 18px;padding-bottom:10px;border-bottom:1px solid ${t.dashed};letter-spacing:${t.letterSpacing};${themeFont(t)}">${inner}</h2>`,
       }
     };
 
@@ -1198,6 +1201,8 @@ fetchUsers("v1/active-users").then(activeUsers => {
 
       // Apply base class-level font sizes inside the preview for visual fidelity
       previewBody.style.fontSize = selectedFontSize;
+      // Per-theme font for the whole article body (印象笔记 = 宋体). Reset otherwise.
+      previewBody.style.fontFamily = styleThemes[selectedStyleTheme].fontFamily || '';
     }
 
     // Build WeChat Styled HTML by converting classes to Inline CSS styles
@@ -1332,10 +1337,15 @@ fetchUsers("v1/active-users").then(activeUsers => {
     async function copyStyledHTML() {
       try {
         const html = getWeChatStyledHTML();
-        
+
+        // Use the active theme's font (印象笔记 = 宋体) so the serif survives
+        // into WeChat via the wrapper, with children inheriting it.
+        const defaultFont = "-apple-system-font, BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif";
+        const wrapperFont = (styleThemes[selectedStyleTheme] && styleThemes[selectedStyleTheme].fontFamily) || defaultFont;
+
         // Construct standard html wrapper for clipboard rich text
         const htmlWrapper = `
-          <div style="font-family: -apple-system-font, BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif; max-width: 100%; box-sizing: border-box; word-wrap: break-word;">
+          <div style="font-family: ${wrapperFont}; max-width: 100%; box-sizing: border-box; word-wrap: break-word;">
             ${html}
           </div>
         `;
