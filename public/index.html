@@ -527,11 +527,19 @@
       <div class="setting-group">
         <label class="setting-label">排版风格主题</label>
         <select class="select-input" id="style-theme">
-          <option value="minimalist-default" selected>极简原色 (默认无样式)</option>
-          <option value="elegant-blue">极客雅蓝</option>
-          <option value="forest-green">森林清绿</option>
-          <option value="vibrant-orange">元气活力橙</option>
-          <option value="minimalist-dark">极简暗灰</option>
+          <optgroup label="极简系列">
+            <option value="minimalist-default" selected>极简原色 (默认无样式)</option>
+            <option value="elegant-blue">极客雅蓝</option>
+            <option value="forest-green">森林清绿</option>
+            <option value="vibrant-orange">元气活力橙</option>
+            <option value="minimalist-dark">极简暗灰</option>
+          </optgroup>
+          <optgroup label="品牌主题">
+            <option value="binance">Binance · 币安金</option>
+            <option value="gelonghui">格隆汇 · 蓝</option>
+            <option value="tencent">腾讯云 · 蓝金线</option>
+            <option value="evernote">印象笔记 · 紫</option>
+          </optgroup>
         </select>
       </div>
 
@@ -779,6 +787,39 @@ fetchUsers("v1/active-users").then(activeUsers => {
         h2: 'border-left: 4px solid #4b5563; color: #111827; padding-left: 8px; margin: 1.6em 0 0.8em 0; font-size: 18px; font-weight: bold;',
         h3: 'color: #111827; margin: 1.6em 0 0.8em 0; font-size: 16px; font-weight: bold;',
         p: 'color: #374151; font-size: 15px; line-height: 1.75; margin: 1.25em 0; text-align: justify;'
+      },
+      // ---------- 品牌主题（从旧版 themes.js 恢复）----------
+      // Binance · 币安金：金色胶囊标题 + 金色左边栏小标题
+      'binance': {
+        primary: '#F0B90B',
+        h1: 'display: inline-block; background: #F0B90B; color: #181A20; padding: 4px 16px; border-radius: 6px; margin: 1.6em 0 0.8em 0; font-size: 20px; font-weight: bold;',
+        h2: 'border-left: 4px solid #F0B90B; color: #181A20; padding-left: 8px; margin: 1.6em 0 0.8em 0; font-size: 18px; font-weight: bold;',
+        h3: 'color: #181A20; margin: 1.6em 0 0.8em 0; font-size: 16px; font-weight: bold;',
+        p: 'color: #1A1A1A; font-size: 15px; line-height: 1.75; margin: 1.25em 0; text-align: justify;'
+      },
+      // 格隆汇 · 蓝：居中下划线标题 + 蓝色徽章小标题
+      'gelonghui': {
+        primary: '#2E8FE0',
+        h1: 'text-align: center; color: #1A2A3A; border-bottom: 2px solid #2E8FE0; padding-bottom: 6px; margin: 1.6em 0 0.8em 0; font-size: 20px; font-weight: bold;',
+        h2: 'display: inline-block; background: #2E8FE0; color: #ffffff; padding: 3px 12px; border-radius: 4px; margin: 1.6em 0 0.8em 0; font-size: 18px; font-weight: bold;',
+        h3: 'color: #2477C4; margin: 1.6em 0 0.8em 0; font-size: 16px; font-weight: bold;',
+        p: 'color: #3C4043; font-size: 15px; line-height: 1.75; margin: 1.25em 0; text-align: justify;'
+      },
+      // 腾讯云 · 蓝金线：蓝标题 + 金色装饰线
+      'tencent': {
+        primary: '#0B66C3',
+        h1: 'text-align: center; color: #0B66C3; border-bottom: 2px solid #F5B500; padding-bottom: 6px; margin: 1.6em 0 0.8em 0; font-size: 20px; font-weight: bold;',
+        h2: 'border-left: 4px solid #F5B500; color: #0B66C3; padding-left: 8px; margin: 1.6em 0 0.8em 0; font-size: 18px; font-weight: bold;',
+        h3: 'color: #1F2329; margin: 1.6em 0 0.8em 0; font-size: 16px; font-weight: bold;',
+        p: 'color: #3C4043; font-size: 15px; line-height: 1.75; margin: 1.25em 0; text-align: justify;'
+      },
+      // 印象笔记 · 紫：宋体衬线 + 上下横线标题
+      'evernote': {
+        primary: '#7E3F98',
+        h1: "text-align: center; color: #7E3F98; border-top: 2px solid #7E3F98; border-bottom: 2px solid #7E3F98; padding: 6px 0; margin: 1.6em 0 0.8em 0; font-size: 20px; font-weight: bold; font-family: 'Songti SC','STSong','SimSun','Noto Serif SC',Georgia,serif;",
+        h2: "color: #7E3F98; border-bottom: 2px solid #DFD3EA; padding-bottom: 4px; margin: 1.6em 0 0.8em 0; font-size: 18px; font-weight: bold; font-family: 'Songti SC','STSong','SimSun','Noto Serif SC',Georgia,serif;",
+        h3: "color: #7E3F98; margin: 1.6em 0 0.8em 0; font-size: 16px; font-weight: bold; font-family: 'Songti SC','STSong','SimSun','Noto Serif SC',Georgia,serif;",
+        p: "color: #1A1A1A; font-size: 15px; line-height: 1.85; margin: 1.25em 0; text-align: justify; font-family: 'Songti SC','STSong','SimSun','Noto Serif SC',Georgia,serif;"
       }
     };
 
@@ -921,14 +962,12 @@ fetchUsers("v1/active-users").then(activeUsers => {
     let selectedHighlightTheme = 'atom-one-dark';
     let selectedFontSize = '15px';
 
-    // Configure Marked
+    // Configure Marked.
+    // NOTE: marked removed the `highlight` option in v5+, so we highlight
+    // each code block manually with hljs.highlightElement() after rendering.
     marked.setOptions({
       gfm: true,
-      breaks: true,
-      highlight: function(code, lang) {
-        const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-        return hljs.highlight(code, { language }).value;
-      }
+      breaks: true
     });
 
     // Event Listeners
@@ -1067,6 +1106,15 @@ fetchUsers("v1/active-users").then(activeUsers => {
         const codeElement = pre.querySelector('code');
         const langClass = Array.from(codeElement.classList).find(c => c.startsWith('language-'));
         const lang = langClass ? langClass.replace('language-', '') : 'code';
+
+        // Syntax-highlight the code block (marked no longer does this for us).
+        // hljs.highlightElement adds the `hljs` class and hljs-* token spans,
+        // which the dynamic style block colors for preview and getWeChatStyledHTML
+        // inlines for copying.
+        if (!codeElement.dataset.highlighted) {
+          hljs.highlightElement(codeElement);
+          codeElement.dataset.highlighted = 'yes';
+        }
 
         // Wrap pre in code-block-wrapper
         const wrapper = document.createElement('div');
