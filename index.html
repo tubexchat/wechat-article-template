@@ -1,23 +1,20 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>微信公众号 Markdown 排版与语法高亮工具</title>
-
+  
   <!-- Typography & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <!-- Marked (Markdown Parser) & Highlight.js (Syntax Highlighting) -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-
+  
   <!-- Dynamic style block for syntax highlighting -->
   <style id="dynamic-hljs-style"></style>
 
@@ -74,16 +71,13 @@
       width: 8px;
       height: 8px;
     }
-
     ::-webkit-scrollbar-track {
       background: var(--bg-secondary);
     }
-
     ::-webkit-scrollbar-thumb {
       background: var(--border-color);
       border-radius: 4px;
     }
-
     ::-webkit-scrollbar-thumb:hover {
       background: var(--accent-color);
     }
@@ -127,8 +121,7 @@
       gap: 1rem;
     }
 
-    .theme-toggle-btn,
-    .action-btn {
+    .theme-toggle-btn, .action-btn {
       background: var(--bg-tertiary);
       border: 1px solid var(--border-color);
       color: var(--text-main);
@@ -143,8 +136,7 @@
       transition: all 0.2s ease;
     }
 
-    .theme-toggle-btn:hover,
-    .action-btn:hover {
+    .theme-toggle-btn:hover, .action-btn:hover {
       border-color: var(--accent-color);
       background: rgba(99, 102, 241, 0.1);
     }
@@ -334,8 +326,7 @@
       letter-spacing: 0.05em;
     }
 
-    .select-input,
-    .text-input {
+    .select-input, .text-input {
       background: var(--bg-tertiary);
       border: 1px solid var(--border-color);
       color: var(--text-main);
@@ -346,8 +337,7 @@
       transition: border-color 0.2s ease;
     }
 
-    .select-input:focus,
-    .text-input:focus {
+    .select-input:focus, .text-input:focus {
       border-color: var(--accent-color);
     }
 
@@ -383,30 +373,16 @@
       text-align: justify;
     }
 
-    .rendered-content h1,
-    .rendered-content h2,
-    .rendered-content h3 {
+    .rendered-content h1, .rendered-content h2, .rendered-content h3 {
       font-weight: bold;
       color: #111111;
       margin: 1.6em 0 0.8em 0;
       line-height: 1.4;
     }
 
-    .rendered-content h1 {
-      font-size: 20px;
-      border-bottom: 2px solid var(--theme-color, #6366f1);
-      padding-bottom: 4px;
-    }
-
-    .rendered-content h2 {
-      font-size: 18px;
-      border-left: 4px solid var(--theme-color, #6366f1);
-      padding-left: 8px;
-    }
-
-    .rendered-content h3 {
-      font-size: 16px;
-    }
+    .rendered-content h1 { font-size: 20px; border-bottom: 2px solid var(--theme-color, #6366f1); padding-bottom: 4px; }
+    .rendered-content h2 { font-size: 18px; border-left: 4px solid var(--theme-color, #6366f1); padding-left: 8px; }
+    .rendered-content h3 { font-size: 16px; }
 
     .rendered-content blockquote {
       border-left: 4px solid #cbcbcb;
@@ -417,8 +393,7 @@
       border-radius: 4px;
     }
 
-    .rendered-content ul,
-    .rendered-content ol {
+    .rendered-content ul, .rendered-content ol {
       padding-left: 20px;
       margin: 1.25em 0;
       color: #333333;
@@ -457,17 +432,9 @@
       border-radius: 50%;
     }
 
-    .mac-dot.red {
-      background: #ff5f56;
-    }
-
-    .mac-dot.yellow {
-      background: #ffbd2e;
-    }
-
-    .mac-dot.green {
-      background: #27c93f;
-    }
+    .mac-dot.red { background: #ff5f56; }
+    .mac-dot.yellow { background: #ffbd2e; }
+    .mac-dot.green { background: #27c93f; }
 
     .code-lang {
       font-family: var(--font-ui);
@@ -524,17 +491,11 @@
 
     /* Animations */
     @keyframes pulse {
-      from {
-        transform: scale(1);
-      }
-
-      to {
-        transform: scale(1.08);
-      }
+      from { transform: scale(1); }
+      to { transform: scale(1.08); }
     }
   </style>
 </head>
-
 <body>
 
   <!-- Top Header -->
@@ -543,7 +504,7 @@
       <i class="fa-solid fa-code-merge logo-icon"></i>
       <span class="logo-title">WeChat Markdown Highlight</span>
     </div>
-
+    
     <div class="header-actions">
       <button class="action-btn" id="copy-btn">
         <i class="fa-regular fa-copy"></i> 一键复制公众号格式
@@ -556,17 +517,17 @@
 
   <!-- Main View -->
   <div class="main-container">
-
+    
     <!-- Controls/Settings Panel (Leftmost) -->
     <div class="settings-panel">
-      <h3
-        style="font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+      <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
         <i class="fa-solid fa-sliders"></i> 排版配置
       </h3>
-
+      
       <div class="setting-group">
         <label class="setting-label">排版风格主题</label>
         <select class="select-input" id="style-theme">
+          <option value="minimalist-default" selected>极简原色 (默认无样式)</option>
           <option value="elegant-blue">极客雅蓝</option>
           <option value="forest-green">森林清绿</option>
           <option value="vibrant-orange">元气活力橙</option>
@@ -595,7 +556,7 @@
 
       <div class="setting-group">
         <label class="setting-label">文章作者</label>
-        <input type="text" class="text-input" id="author-input" value="张伟">
+        <input type="text" class="text-input" id="author-input" value="Nick">
       </div>
 
       <div class="setting-group">
@@ -615,16 +576,11 @@
           <i class="fa-solid fa-pen-fancy"></i> Markdown 编辑器
         </div>
         <div class="toolbar">
-          <button class="tool-btn" title="加粗" onclick="insertFormat('**', '**')"><i
-              class="fa-solid fa-bold"></i></button>
-          <button class="tool-btn" title="斜体" onclick="insertFormat('*', '*')"><i
-              class="fa-solid fa-italic"></i></button>
-          <button class="tool-btn" title="链接" onclick="insertFormat('[', '](url)')"><i
-              class="fa-solid fa-link"></i></button>
-          <button class="tool-btn" title="引用" onclick="insertFormat('\n> ', '')"><i
-              class="fa-solid fa-quote-left"></i></button>
-          <button class="tool-btn" title="插入代码块" onclick="insertFormat('\n```python\n', '\n```\n')"><i
-              class="fa-solid fa-code"></i></button>
+          <button class="tool-btn" title="加粗" onclick="insertFormat('**', '**')"><i class="fa-solid fa-bold"></i></button>
+          <button class="tool-btn" title="斜体" onclick="insertFormat('*', '*')"><i class="fa-solid fa-italic"></i></button>
+          <button class="tool-btn" title="链接" onclick="insertFormat('[', '](url)')"><i class="fa-solid fa-link"></i></button>
+          <button class="tool-btn" title="引用" onclick="insertFormat('\n> ', '')"><i class="fa-solid fa-quote-left"></i></button>
+          <button class="tool-btn" title="插入代码块" onclick="insertFormat('\n```python\n', '\n```\n')"><i class="fa-solid fa-code"></i></button>
         </div>
       </div>
       <div class="editor-wrapper">
@@ -639,7 +595,7 @@
           <i class="fa-solid fa-mobile-screen-button"></i> 手机预览效果
         </div>
       </div>
-
+      
       <!-- Phone Mockup -->
       <div class="phone-mockup">
         <!-- Phone Status Bar -->
@@ -661,7 +617,7 @@
         <div class="phone-content" id="wechat-content">
           <div class="wechat-article-title" id="preview-title">使用 Python 构建高效并发应用</div>
           <div class="wechat-author-info">
-            <span id="preview-author">张伟</span>
+            <span id="preview-author">Nick</span>
             <span style="color: #888888;">2026-06-29</span>
             <a href="#" class="wechat-link">公众号模板</a>
           </div>
@@ -789,6 +745,13 @@ fetchUsers("v1/active-users").then(activeUsers => {
 
     // Color theme mappings for WeChat elements
     const styleThemes = {
+      'minimalist-default': {
+        primary: '#374151',
+        h1: 'color: #333333; margin: 1.6em 0 0.8em 0; font-size: 20px; font-weight: bold;',
+        h2: 'color: #333333; margin: 1.6em 0 0.8em 0; font-size: 18px; font-weight: bold;',
+        h3: 'color: #333333; margin: 1.6em 0 0.8em 0; font-size: 16px; font-weight: bold;',
+        p: 'color: #333333; font-size: 15px; line-height: 1.75; margin: 1.25em 0; text-align: justify;'
+      },
       'elegant-blue': {
         primary: '#4f46e5',
         h1: 'border-bottom: 2px solid #4f46e5; color: #1e3a8a; padding-bottom: 4px; margin: 1.6em 0 0.8em 0; font-size: 20px; font-weight: bold;',
@@ -940,7 +903,7 @@ fetchUsers("v1/active-users").then(activeUsers => {
     const previewBody = document.getElementById('preview-body');
     const previewTitle = document.getElementById('preview-title');
     const previewAuthor = document.getElementById('preview-author');
-
+    
     const styleThemeSelect = document.getElementById('style-theme');
     const highlightThemeSelect = document.getElementById('highlight-theme');
     const fontSizeSelect = document.getElementById('font-size-select');
@@ -954,7 +917,7 @@ fetchUsers("v1/active-users").then(activeUsers => {
 
     // State Variables
     let isDarkTheme = true;
-    let selectedStyleTheme = 'elegant-blue';
+    let selectedStyleTheme = 'minimalist-default';
     let selectedHighlightTheme = 'atom-one-dark';
     let selectedFontSize = '15px';
 
@@ -962,36 +925,45 @@ fetchUsers("v1/active-users").then(activeUsers => {
     marked.setOptions({
       gfm: true,
       breaks: true,
-      highlight: function (code, lang) {
+      highlight: function(code, lang) {
         const language = hljs.getLanguage(lang) ? lang : 'plaintext';
         return hljs.highlight(code, { language }).value;
       }
     });
 
     // Event Listeners
-    markdownInput.addEventListener('input', renderPreview);
+    markdownInput.addEventListener('input', () => {
+      renderPreview();
+      // Save content to localStorage so it is never lost on refresh
+      localStorage.setItem('wechat_markdown_content', markdownInput.value);
+    });
+
     authorInput.addEventListener('input', () => {
       previewAuthor.textContent = authorInput.value;
+      localStorage.setItem('wechat_markdown_author', authorInput.value);
     });
 
     styleThemeSelect.addEventListener('change', () => {
       selectedStyleTheme = styleThemeSelect.value;
-
+      localStorage.setItem('wechat_markdown_style_theme', selectedStyleTheme);
+      
       // Update primary color style property
       const primaryColor = styleThemes[selectedStyleTheme].primary;
       document.documentElement.style.setProperty('--theme-color', primaryColor);
-
+      
       renderPreview();
     });
 
     highlightThemeSelect.addEventListener('change', () => {
       selectedHighlightTheme = highlightThemeSelect.value;
+      localStorage.setItem('wechat_markdown_highlight_theme', selectedHighlightTheme);
       updateDynamicStyles();
       renderPreview();
     });
 
     fontSizeSelect.addEventListener('change', () => {
       selectedFontSize = fontSizeSelect.value;
+      localStorage.setItem('wechat_markdown_font_size', selectedFontSize);
       renderPreview();
     });
 
@@ -999,13 +971,14 @@ fetchUsers("v1/active-users").then(activeUsers => {
       const templateName = templateSelect.value;
       if (templates[templateName]) {
         markdownInput.value = templates[templateName];
-
+        localStorage.setItem('wechat_markdown_content', markdownInput.value);
+        
         // Auto update title based on header
         const firstLine = templates[templateName].split('\n')[0];
         if (firstLine.startsWith('# ')) {
           previewTitle.textContent = firstLine.substring(2);
         }
-
+        
         renderPreview();
       }
     });
@@ -1027,7 +1000,7 @@ fetchUsers("v1/active-users").then(activeUsers => {
     function updateDynamicStyles() {
       const hlTheme = codeThemesInline[selectedHighlightTheme];
       const isDarkCodeBg = selectedHighlightTheme !== 'github';
-
+      
       // Inject preview-only hljs class styles into dynamic-hljs-style block
       dynamicHljsStyle.textContent = `
         .rendered-content pre {
@@ -1065,21 +1038,22 @@ fetchUsers("v1/active-users").then(activeUsers => {
       markdownInput.selectionStart = start + startTag.length;
       markdownInput.selectionEnd = start + startTag.length + selected.length;
       renderPreview();
+      localStorage.setItem('wechat_markdown_content', markdownInput.value);
     }
 
     // Render Preview
     function renderPreview() {
       const mdText = markdownInput.value;
       let htmlContent = '';
-
+      
       // Parse markdown to HTML
       if (mdText) {
         htmlContent = marked.parse(mdText);
       }
-
+      
       // Inject and render
       previewBody.innerHTML = htmlContent;
-
+      
       // Set title from the first heading if exists, and strip it from the body
       const firstHeading = previewBody.querySelector('h1');
       if (firstHeading && mdText.trim().startsWith('# ')) {
@@ -1097,7 +1071,7 @@ fetchUsers("v1/active-users").then(activeUsers => {
         // Wrap pre in code-block-wrapper
         const wrapper = document.createElement('div');
         wrapper.className = 'code-block-wrapper';
-
+        
         const header = document.createElement('div');
         header.className = 'code-header';
         header.innerHTML = `
@@ -1108,7 +1082,7 @@ fetchUsers("v1/active-users").then(activeUsers => {
           </div>
           <span class="code-lang">${lang}</span>
         `;
-
+        
         pre.parentNode.insertBefore(wrapper, pre);
         wrapper.appendChild(header);
         wrapper.appendChild(pre);
@@ -1172,12 +1146,12 @@ fetchUsers("v1/active-users").then(activeUsers => {
       // 2. Inline Highlight.js code highlights
       tempContainer.querySelectorAll('.code-block-wrapper').forEach(wrapper => {
         wrapper.setAttribute('style', 'margin: 1.5em 0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); border: 1px solid #e5e7eb;');
-
+        
         const header = wrapper.querySelector('.code-header');
         if (header) {
           const borderStyle = isDarkCodeBg ? 'border-bottom: 1px solid #3e4451;' : 'border-bottom: 1px solid #d1d5da;';
           header.setAttribute('style', `background: ${hlTheme.headerBackground}; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; ${borderStyle}`);
-
+          
           header.querySelector('.mac-dots').setAttribute('style', 'display: flex; gap: 6px;');
           header.querySelectorAll('.mac-dot').forEach(dot => {
             let color = '#ff5f56';
@@ -1193,18 +1167,18 @@ fetchUsers("v1/active-users").then(activeUsers => {
         const pre = wrapper.querySelector('pre');
         if (pre) {
           pre.setAttribute('style', hlTheme.pre);
-
+          
           const code = pre.querySelector('code');
           if (code) {
             code.setAttribute('style', 'font-family: Consolas, Monaco, monospace; font-size: 13px; line-height: 1.5; display: block; overflow-x: auto;');
-
+            
             // Map each highlight.js token class to inline style
             const spans = code.querySelectorAll('span');
             spans.forEach(span => {
               // Extract the class names
               const classes = Array.from(span.classList);
               let combinedStyle = '';
-
+              
               classes.forEach(cls => {
                 if (cls.startsWith('hljs-')) {
                   const tokenName = cls.replace('hljs-', '');
@@ -1243,7 +1217,7 @@ fetchUsers("v1/active-users").then(activeUsers => {
     async function copyStyledHTML() {
       try {
         const html = getWeChatStyledHTML();
-
+        
         // Construct standard html wrapper for clipboard rich text
         const htmlWrapper = `
           <div style="font-family: -apple-system-font, BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', Arial, sans-serif; max-width: 100%; box-sizing: border-box; word-wrap: break-word;">
@@ -1262,7 +1236,7 @@ fetchUsers("v1/active-users").then(activeUsers => {
         });
 
         await navigator.clipboard.write([clipboardItem]);
-
+        
         // Show Toast
         toast.classList.add('show');
         setTimeout(() => {
@@ -1275,11 +1249,47 @@ fetchUsers("v1/active-users").then(activeUsers => {
       }
     }
 
+    // Load state from localStorage on page load
+    function loadSavedState() {
+      const savedContent = localStorage.getItem('wechat_markdown_content');
+      const savedAuthor = localStorage.getItem('wechat_markdown_author');
+      const savedStyleTheme = localStorage.getItem('wechat_markdown_style_theme');
+      const savedHighlightTheme = localStorage.getItem('wechat_markdown_highlight_theme');
+      const savedFontSize = localStorage.getItem('wechat_markdown_font_size');
+
+      if (savedContent !== null) {
+        markdownInput.value = savedContent;
+      } else {
+        markdownInput.value = templates.default;
+      }
+
+      if (savedAuthor !== null) {
+        authorInput.value = savedAuthor;
+        previewAuthor.textContent = savedAuthor;
+      }
+
+      if (savedStyleTheme !== null) {
+        selectedStyleTheme = savedStyleTheme;
+        styleThemeSelect.value = savedStyleTheme;
+        const primaryColor = styleThemes[selectedStyleTheme].primary;
+        document.documentElement.style.setProperty('--theme-color', primaryColor);
+      }
+
+      if (savedHighlightTheme !== null) {
+        selectedHighlightTheme = savedHighlightTheme;
+        highlightThemeSelect.value = savedHighlightTheme;
+      }
+
+      if (savedFontSize !== null) {
+        selectedFontSize = savedFontSize;
+        fontSizeSelect.value = savedFontSize;
+      }
+    }
+
     // Initialize
+    loadSavedState();
     updateDynamicStyles();
-    markdownInput.value = templates.default;
     renderPreview();
   </script>
 </body>
-
 </html>
