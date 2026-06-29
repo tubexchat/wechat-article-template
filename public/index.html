@@ -481,6 +481,28 @@
       border-bottom: 1px solid var(--theme-color, #6366f1);
     }
 
+    /* Tables — font is kept ~2px smaller than body (set dynamically in JS) */
+    .rendered-content table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 1.25em 0;
+      font-size: 13px;
+    }
+
+    .rendered-content th,
+    .rendered-content td {
+      border: 1px solid #e5e7eb;
+      padding: 6px 10px;
+      font-size: 13px;
+    }
+
+    .rendered-content th {
+      background: #f3f4f6;
+      color: #111111;
+      font-weight: bold;
+      text-align: left;
+    }
+
     /* Inline styling overrides for copying */
     .rendered-content p code {
       background: #f3f4f6;
@@ -1228,6 +1250,10 @@ fetchUsers("v1/active-users").then(activeUsers => {
       previewBody.style.fontSize = selectedFontSize;
       // Per-theme font for the whole article body (印象笔记 = 宋体). Reset otherwise.
       previewBody.style.fontFamily = styleThemes[selectedStyleTheme].fontFamily || '';
+
+      // Tables use a font ~2px smaller than the body, tracking the selected size.
+      const tableFont = (parseInt(selectedFontSize, 10) - 2) + 'px';
+      previewBody.querySelectorAll('table, th, td').forEach(el => { el.style.fontSize = tableFont; });
     }
 
     // Build WeChat Styled HTML by converting classes to Inline CSS styles
@@ -1291,6 +1317,18 @@ fetchUsers("v1/active-users").then(activeUsers => {
       // Links follow the active theme color (inline so it survives into WeChat)
       tempContainer.querySelectorAll('a').forEach(a => {
         a.setAttribute('style', `color: ${styleTheme.primary}; text-decoration: none; font-weight: 500; border-bottom: 1px solid ${styleTheme.primary};`);
+      });
+
+      // Tables — font ~2px smaller than the body, inlined for WeChat
+      const tableFontSize = (parseInt(selectedFontSize, 10) - 2) + 'px';
+      tempContainer.querySelectorAll('table').forEach(table => {
+        table.setAttribute('style', `border-collapse: collapse; width: 100%; margin: 1.25em 0; font-size: ${tableFontSize};`);
+      });
+      tempContainer.querySelectorAll('th').forEach(th => {
+        th.setAttribute('style', `border: 1px solid #e5e7eb; padding: 6px 10px; background: #f3f4f6; color: #111111; font-weight: bold; text-align: left; font-size: ${tableFontSize};`);
+      });
+      tempContainer.querySelectorAll('td').forEach(td => {
+        td.setAttribute('style', `border: 1px solid #e5e7eb; padding: 6px 10px; color: #333333; font-size: ${tableFontSize};`);
       });
 
       // 2. Inline Highlight.js code highlights
