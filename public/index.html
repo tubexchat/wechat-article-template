@@ -375,7 +375,7 @@
     }
 
     .wechat-author-info .wechat-link {
-      color: #576b95;
+      color: var(--theme-color, #6366f1);
       font-weight: bold;
       text-decoration: none;
     }
@@ -471,6 +471,14 @@
       font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
       font-size: 13px;
       line-height: 1.5;
+    }
+
+    /* Body links follow the active theme color */
+    .rendered-content a {
+      color: var(--theme-color, #6366f1);
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid var(--theme-color, #6366f1);
     }
 
     /* Inline styling overrides for copying */
@@ -1280,6 +1288,11 @@ fetchUsers("v1/active-users").then(activeUsers => {
         inlineCode.setAttribute('style', 'background: #f3f4f6; color: #ea580c; padding: 2px 6px; border-radius: 4px; font-family: Consolas, Monaco, monospace; font-size: 13px;');
       });
 
+      // Links follow the active theme color (inline so it survives into WeChat)
+      tempContainer.querySelectorAll('a').forEach(a => {
+        a.setAttribute('style', `color: ${styleTheme.primary}; text-decoration: none; font-weight: 500; border-bottom: 1px solid ${styleTheme.primary};`);
+      });
+
       // 2. Inline Highlight.js code highlights
       tempContainer.querySelectorAll('.code-block-wrapper').forEach(wrapper => {
         wrapper.setAttribute('style', 'margin: 1.5em 0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); border: 1px solid #e5e7eb;');
@@ -1430,6 +1443,9 @@ fetchUsers("v1/active-users").then(activeUsers => {
 
     // Initialize
     loadSavedState();
+    // Ensure the theme color is applied on first load (so links/headings
+    // match the active theme even before the user changes anything).
+    document.documentElement.style.setProperty('--theme-color', styleThemes[selectedStyleTheme].primary);
     updateDynamicStyles();
     renderPreview();
   </script>
